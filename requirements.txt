@@ -1,0 +1,16 @@
+gunicorn==19.7.1
+beautifulsoup4==4.6.3
+bs4==0.0.1
+certifi==2018.8.24
+chardet==3.0.4
+cssselect==1.0.3
+Django==1.11
+django-cors-headers==2.4.0
+djangorestframework==3.8.2
+html2text==2018.1.9
+idna==2.7
+lxml==4.2.4
+pytz==2018.5
+readability-lxml==0.7
+requests==2.19.1
+urllib3==1.23

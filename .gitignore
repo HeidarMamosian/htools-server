@@ -1,0 +1,11 @@
+venv/
+#InteliJ IDEA
+.idea/
+gciMachine.iml
+
+#SQLITE DB
+db.sqlite3
+
+# config file
+analytics-server.iml
+topic-modeling-analytics-640d623f1b39.json
