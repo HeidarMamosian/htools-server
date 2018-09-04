@@ -32,15 +32,13 @@ def check_url(request, url):
                  'links': []}
         # print(r)
         s = PageSerializer(r)
-        return Response(s.data)
-
     except:
         r = {'status': 500,
              'text': '',
              'url': url,
              'links': []}
         s = PageSerializer(r)
-        return Response(s.data)
+    return Response(s.data)
 
 
 @api_view(['GET'])
