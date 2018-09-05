@@ -51,7 +51,7 @@ def check_url_get_text(request, url):
         response = requests.get(url, headers=headers)
         # response = requests.get(url)
         if response.ok:
-            text = get_text(response.text)
+            text = get_text_2(response.text)
             r = {'status': 200,
                  'text': text,
                  'url': url,
