@@ -10,6 +10,8 @@ from readability import Document
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import PageSerializer
+from googlesearch import search
+from goose3 import Goose 
 
 
 @api_view(['GET'])
@@ -52,10 +54,12 @@ def check_url_get_text(request, url):
         # response = requests.get(url)
         if response.ok:
             text = get_text_2(response.text)
+            links = get_links(response.text, url)
+
             r = {'status': 200,
                  'text': text,
                  'url': url,
-                 'links': []}
+                 'links': links}
 
         else:
             r = {'status': response.status_code,
@@ -178,3 +182,88 @@ def text_from_html(body):
     texts = soup.findAll(text=True)
     visible_texts = filter(tag_visible, texts)
     return u" ".join(t.strip() for t in visible_texts)
+
+
+
+
+
+@api_view(['GET'])
+def google_search(request, concept):
+    print(concept)
+    result = search(concept, stop=20)
+    links = []
+    for url in result:
+        print(url)
+        links.append(url)
+    r = {'status': 200,
+         'text': '',
+          'url': url,
+          'links': links}
+
+    s = PageSerializer(r)
+    return Response(s.data)
+
+    # try:
+    #     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+    #                              'Chrome/66.0.3359.139 Safari/537.36'}
+    #     response = requests.get(url, headers=headers)
+    #     # response = requests.get(url)
+    #     if response.ok:
+    #         r = {'status': 200,
+    #              'text': '',
+    #              'url': url,
+    #              'links': []}
+
+    #     else:
+    #         r = {'status': response.status_code,
+    #              'text': '',
+    #              'url': url,
+    #              'links': []}
+    #     # print(r)
+    #     s = PageSerializer(r)
+    # except:
+    #     r = {'status': 500,
+    #          'text': '',
+    #          'url': url,
+    #          'links': []}
+    #     s = PageSerializer(r)
+    # return Response(s.data)
+
+
+
+@api_view(['GET'])
+def goose_get_text(request, url):
+    try:
+        sleep(randint(1, 3))
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                          'Chrome/66.0.3359.139 Safari/537.36'}
+        response = requests.get(url, headers=headers)
+        g=Goose()
+        article = g.extract(raw_html=response.text)
+        if response.ok:
+            text = article.cleaned_text
+            links = get_links(response.text, url)
+
+            r = {'status': 200,
+                 'text': text,
+                 'url': url,
+                 'links': links}
+
+        else:
+            r = {'status': response.status_code,
+                 'text': '',
+                 'url': url,
+                 'links': []}
+        # print(r)
+        s = PageSerializer(r)
+        return Response(s.data)
+
+    except:
+        r = {'status': 500,
+             'text': '',
+             'url': url,
+             'links': []}
+        s = PageSerializer(r)
+        return Response(s.data)
+
