@@ -10,7 +10,7 @@ from readability import Document
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import PageSerializer
-from googlesearch import search
+# from googlesearch import search
 from goose3 import Goose 
 
 
@@ -125,7 +125,10 @@ def get_links(response, url):
             print(link)
             abslink = urljoin(url, link['href'])
             parsed_uri = urlparse(abslink)
+
             url_domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+            abslink = abslink.split('#')[0]
+            
             if url_domain == main_domain:
                 if abslink not in links:
                     if not (abslink.split(".").pop().upper() in ["PDF", "JPG", "PNG", "EXE"]):
