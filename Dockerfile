@@ -89,4 +89,4 @@ EXPOSE 8000
 
 # Run the django web server using gunicorn
 
-CMD ["gunicorn", "mysite.wsgi:application", "--log-level=debug", "--bind=0.0.0.0", "--workers=3", "--timeout=30000"]
+CMD ["gunicorn", "scraper_server.wsgi:application", "--log-level=debug", "--bind=0.0.0.0", "--workers=3", "--timeout=30000"]
