@@ -10,8 +10,46 @@ from readability import Document
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import PageSerializer
-# from googlesearch import search
-from goose3 import Goose 
+from goose3 import Goose
+from rest_framework import status
+import codecs
+import chardet
+from gensim.utils import simple_preprocess
+from lexrank import STOPWORDS, LexRank
+from nltk.tokenize import sent_tokenize
+
+
+@api_view(['GET'])
+def index(request):
+    return Response("The backend-component is running!")
+
+
+@api_view(['POST'])
+def lexrank(request):
+    if request.method=='POST':
+
+        print("ok")
+        stw = request.POST['stopwords']
+        mystopwords = [x.strip() for x in stw.split(',')]
+        file = request.FILES['file']
+        threshold = request.POST['threshold']
+        sentencenumber = request.POST['sentencenumber']
+        encoding1 = chardet.detect(file.read())['encoding']
+        file.open()  # seek to 0
+        utf8_file = codecs.EncodedFile(file, encoding1)
+        text = utf8_file.read()
+        text = text.decode(encoding1)
+        # _doc = Document(text)
+        # sentences = _doc.to_sentences()
+        text = text.replace('\n', ' ')
+        text = text.replace('i.e.', ' i.e')
+        text = text.replace('al.', 'al,')
+        sentences = lexrank_sum(text, mystopwords, int(sentencenumber), float(threshold))
+        print(text)
+        return Response({"Text": text, "Sentences": sentences}, status=status.HTTP_200_OK)
+    else:
+        print('GET NOT ALLOWd')
+        return Response({"TEXT":"NOT ALLOWED"}, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['GET'])
@@ -270,3 +308,17 @@ def goose_get_text(request, url):
         s = PageSerializer(r)
         return Response(s.data)
 
+
+
+def lexrank_sum(text, stop_words,
+
+                sentencenumber, threshold):
+    doc = list()
+    doc.append(text)
+    lxr = LexRank(doc, stop_words)
+    sentences = list(sent_tokenize(text))
+    # get summary with classical LexRank algorithm
+    print(sentencenumber)
+    summary = lxr.get_summary(sentences, summary_size=sentencenumber, threshold=threshold)
+    return summary
+#

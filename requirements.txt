@@ -5,7 +5,7 @@ chardet==3.0.4
 cssselect==1.0.3
 Django==1.11
 django-cors-headers==2.4.0
-djangorestframework==3.8.2
+djangorestframework==3.9.0
 google==2.0.1
 goose3==3.1.5
 gunicorn==19.7.1
@@ -21,3 +21,5 @@ readability-lxml==0.7
 requests==2.19.1
 six==1.11.0
 urllib3==1.23
+lexrank==0.1.0
+gensim==3.6.0
