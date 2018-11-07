@@ -18,6 +18,46 @@ from gensim.utils import simple_preprocess
 from lexrank import STOPWORDS, LexRank
 from nltk.tokenize import sent_tokenize
 from gensim.summarization.summarizer import summarize as textranksummarize
+from gensim.summarization import keywords
+from textteaser import TextTeaser
+
+
+def call_textteaser(title,text, sent_no):
+    print(title)
+    tt = TextTeaser()
+    sentences = tt.summarize(title, text, sent_no)
+    print(len(sentences))
+    return sentences
+
+
+@api_view(['POST'])
+def textteaser(request):
+    if request.method=='POST':
+        file = request.FILES['file']
+        sentencenumber = int(request.POST['sentencenumber'])
+        print(sentencenumber)
+        title = request.POST['title']
+        print(title)
+
+        encoding1 = chardet.detect(file.read())['encoding']
+        file.open()  # seek to 0
+        utf8_file = codecs.EncodedFile(file, encoding1)
+        text = utf8_file.read()
+        text = text.decode(encoding1)
+
+        text = text.replace('\n', ' ')
+        text = text.replace('i.e.', ' i.e')
+        text = text.replace('al.', 'al,')
+        print(sentencenumber)
+        sentences = call_textteaser( title,text, sentencenumber)
+        print(sentences)
+        return Response({"Text": text, "Sentences": sentences}, status=status.HTTP_200_OK)
+    else:
+        print('GET NOT ALLOWd')
+        return Response({"TEXT":"NOT ALLOWED"}, status=status.HTTP_404_NOT_FOUND)
+
+
+
 
 
 @api_view(['GET'])
@@ -42,8 +82,9 @@ def textrank(request):
         text = text.replace('al.', 'al,')
         print(myratio)
         sentences = textranksummarize(text,  ratio=myratio, word_count=None, split=True)
+        mykeywords = keywords(text, pos_filter=['NN'], ratio=myratio, words=10, lemmatize=True, deacc=True, split=True)
         print(sentences)
-        return Response({"Text": text, "Sentences": sentences}, status=status.HTTP_200_OK)
+        return Response({"Text": text, "Sentences": sentences, "keywords":mykeywords}, status=status.HTTP_200_OK)
     else:
         print('GET NOT ALLOWd')
         return Response({"TEXT":"NOT ALLOWED"}, status=status.HTTP_404_NOT_FOUND)

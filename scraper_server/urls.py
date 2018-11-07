@@ -5,6 +5,7 @@ from api import views
 
 urlpatterns = [
     url(r'^api/lexrank/$', views.lexrank),
+    url(r'^api/textteaser/$', views.textteaser),
     url(r'^api/textrank/$', views.textrank),
     url(r'^admin/', admin.site.urls),
     url(r'^api/goosetext/(?P<url>.+)$', views.goose_get_text),
