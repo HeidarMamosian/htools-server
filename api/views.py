@@ -17,11 +17,39 @@ import chardet
 from gensim.utils import simple_preprocess
 from lexrank import STOPWORDS, LexRank
 from nltk.tokenize import sent_tokenize
+from gensim.summarization.summarizer import summarize as textranksummarize
 
 
 @api_view(['GET'])
 def index(request):
     return Response("The backend-component is running!")
+
+
+
+@api_view(['POST'])
+def textrank(request):
+    if request.method=='POST':
+        file = request.FILES['file']
+        myratio = float(request.POST['ratio'])
+        encoding1 = chardet.detect(file.read())['encoding']
+        file.open()  # seek to 0
+        utf8_file = codecs.EncodedFile(file, encoding1)
+        text = utf8_file.read()
+        text = text.decode(encoding1)
+
+        text = text.replace('\n', ' ')
+        text = text.replace('i.e.', ' i.e')
+        text = text.replace('al.', 'al,')
+        print(myratio)
+        sentences = textranksummarize(text,  ratio=myratio, word_count=None, split=True)
+        print(sentences)
+        return Response({"Text": text, "Sentences": sentences}, status=status.HTTP_200_OK)
+    else:
+        print('GET NOT ALLOWd')
+        return Response({"TEXT":"NOT ALLOWED"}, status=status.HTTP_404_NOT_FOUND)
+
+
+
 
 
 @api_view(['POST'])
