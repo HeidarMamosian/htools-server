@@ -12,7 +12,7 @@ gunicorn==19.7.1
 html2text==2018.1.9
 idna==2.7
 jieba==0.39
-lxml==4.2.4
+lxml==4.6.3
 nltk==3.3
 Pillow==5.2.0
 python-dateutil==2.7.3
